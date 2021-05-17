@@ -1,20 +1,20 @@
 package com.backend_app_hit.app_hit.dto;
 
-import java.util.Date;
+import com.backend_app_hit.app_hit.dao.User;
 
 public class UserDTO {
   private String fullName;
   private String username;
   private String password;
   private String phone;
-  private Date birthday;
+  private String birthday;
   private String email;
   private Long point;
 
   public UserDTO() {
   }
 
-  public UserDTO(String fullName, String username, String password, String phone, Date birthday, String email,
+  public UserDTO(String fullName, String username, String password, String phone, String birthday, String email,
       Long point) {
     this.fullName = fullName;
     this.username = username;
@@ -23,6 +23,15 @@ public class UserDTO {
     this.birthday = birthday;
     this.email = email;
     this.point = point;
+  }
+
+  public UserDTO(User user) {
+    this.fullName = user.getFullName();
+    this.username = user.getUserName();
+    this.phone = user.getPhone();
+    this.birthday = user.getBirthday();
+    this.email = user.getBirthday();
+    this.point = user.getPoint();
   }
 
   public String getFullName() {
@@ -57,11 +66,11 @@ public class UserDTO {
     this.phone = phone;
   }
 
-  public Date getBirthday() {
+  public String getBirthday() {
     return birthday;
   }
 
-  public void setBirthday(Date birthday) {
+  public void setBirthday(String birthday) {
     this.birthday = birthday;
   }
 

@@ -3,7 +3,6 @@ package com.backend_app_hit.app_hit.dao;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
