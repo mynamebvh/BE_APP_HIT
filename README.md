@@ -94,7 +94,7 @@ phone: đúng định dạng
 birthday: đang fix :v
 ```
 
-**Response: **
+**Response:**
 
 ```
 Update
