@@ -29,7 +29,7 @@ public class User implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "user_id")
-  private Long userId;
+  private Long id;
 
   @Nationalized
   @Column(name = "full_name", nullable = false)
@@ -77,10 +77,10 @@ public class User implements Serializable {
   public User() {
   }
 
-  public User(Long userId, String fullName, String userName, String password, String birthday, String role,
-      String phone, String email, Long point, Collection<UserClass> userClasses, Collection<Post> posts,
-      Collection<Comment> comments, Timestamp createAt, Timestamp updateAt) {
-    this.userId = userId;
+  public User(Long id, String fullName, String userName, String password, String birthday, String role, String phone,
+      String email, Long point, Collection<UserClass> userClasses, Collection<Post> posts, Collection<Comment> comments,
+      Timestamp createAt, Timestamp updateAt) {
+    this.id = id;
     this.fullName = fullName;
     this.userName = userName;
     this.password = password;
@@ -100,12 +100,12 @@ public class User implements Serializable {
     return serialVersionUID;
   }
 
-  public Long getUserId() {
-    return userId;
+  public Long getId() {
+    return id;
   }
 
-  public void setUserId(Long userId) {
-    this.userId = userId;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getFullName() {
@@ -114,14 +114,6 @@ public class User implements Serializable {
 
   public void setFullName(String fullName) {
     this.fullName = fullName;
-  }
-
-  public String getBirthday() {
-    return birthday;
-  }
-
-  public void setBirthday(String birthday) {
-    this.birthday = birthday;
   }
 
   public String getUserName() {
@@ -138,6 +130,14 @@ public class User implements Serializable {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public String getBirthday() {
+    return birthday;
+  }
+
+  public void setBirthday(String birthday) {
+    this.birthday = birthday;
   }
 
   public String getRole() {
@@ -212,4 +212,5 @@ public class User implements Serializable {
     this.updateAt = updateAt;
   }
 
+  
 }

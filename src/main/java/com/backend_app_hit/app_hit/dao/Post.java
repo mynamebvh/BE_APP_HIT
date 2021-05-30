@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
@@ -34,6 +35,7 @@ public class Post implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "user_id")
+  @JsonIgnore
   private User user;
 
   @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -41,6 +43,7 @@ public class Post implements Serializable {
   private Collection<Comment> comments;
 
   @Column(name = "content", nullable = false)
+  @Nationalized
   private String content;
 
   @CreationTimestamp
@@ -52,11 +55,18 @@ public class Post implements Serializable {
   public Post() {
   }
 
-  public Post(Long postId, String content, Timestamp createAt, Timestamp updateAt) {
+  public Post(Long postId, User user, Collection<Comment> comments, String content, Timestamp createAt,
+      Timestamp updateAt) {
     this.postId = postId;
+    this.user = user;
+    this.comments = comments;
     this.content = content;
     this.createAt = createAt;
     this.updateAt = updateAt;
+  }
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
   }
 
   public Long getPostId() {
@@ -65,6 +75,22 @@ public class Post implements Serializable {
 
   public void setPostId(Long postId) {
     this.postId = postId;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public Collection<Comment> getComments() {
+    return comments;
+  }
+
+  public void setComments(Collection<Comment> comments) {
+    this.comments = comments;
   }
 
   public String getContent() {
@@ -90,4 +116,6 @@ public class Post implements Serializable {
   public void setUpdateAt(Timestamp updateAt) {
     this.updateAt = updateAt;
   }
+
+  
 }

@@ -58,7 +58,7 @@ public class AuthenController {
     User user = userRepository.findByUserName(request.getUsername());
     String token = jwtUtil.generateToken(request.getUsername());
     return ResponseEntity
-        .ok(new AuthenticationResponse(200, token, user.getUserId(), user.getUserName(), user.getRole()));
+        .ok(new AuthenticationResponse(200, token, user.getId(), user.getUserName(), user.getRole()));
   }
 
   @PostMapping(value = "/signup")
@@ -78,7 +78,7 @@ public class AuthenController {
     final UserDetails userDetails = userService.loadUserByUsername(newUser.getUserName());
     final String jwt = jwtUtil.generateToken(userDetails.getUsername());
     return ResponseEntity
-        .ok(new AuthenticationResponse(201, jwt, newUser.getUserId(), newUser.getUserName(), newUser.getRole()));
+        .ok(new AuthenticationResponse(201, jwt, newUser.getId(), newUser.getUserName(), newUser.getRole()));
   }
 
   @GetMapping(value = "/logout")

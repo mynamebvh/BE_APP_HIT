@@ -2,7 +2,7 @@ package com.backend_app_hit.app_hit.dto;
 
 public class SignUpDTO {
   private String fullName;
-  private String userName;
+  private String username;
   private String password;
   private String email;
   private String phone;
@@ -13,7 +13,7 @@ public class SignUpDTO {
 
   public SignUpDTO(String fullName, String userName, String password, String email, String phone, String birthday) {
     this.fullName = fullName;
-    this.userName = userName;
+    this.username = userName;
     this.password = password;
     this.email = email;
     this.phone = phone;
@@ -29,11 +29,11 @@ public class SignUpDTO {
   }
 
   public String getUserName() {
-    return userName;
+    return username;
   }
 
   public void setUserName(String userName) {
-    this.userName = userName;
+    this.username = userName;
   }
 
   public String getPassword() {
@@ -71,7 +71,7 @@ public class SignUpDTO {
   @Override
   public String toString() {
     return "SignUpDTO [birthday=" + birthday + ", email=" + email + ", fullName=" + fullName + ", password=" + password
-        + ", phone=" + phone + ", userName=" + userName + "]";
+        + ", phone=" + phone + ", userName=" + username + "]";
   }
 
 }

@@ -33,7 +33,7 @@ public class UserAuthorizerImpl implements UserAuthorizer {
     User userAuth = (User) authentication.getPrincipal();
     User user = userRepository.findByUserName(userAuth.getUserName());
 
-    if (user.getUserId() != userId) {
+    if (user.getId() != userId) {
       throw new ForbiddenException("Access denied");
     }
     return true;
@@ -45,7 +45,7 @@ public class UserAuthorizerImpl implements UserAuthorizer {
 
     User user = userRepository.findByUserName(userAuthentication.getUserName());
 
-    if (user.getUserId() != userId) {
+    if (user.getId() != userId) {
       throw new ForbiddenException("Access denied");
     }
     return true;
