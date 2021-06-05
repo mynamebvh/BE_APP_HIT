@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
@@ -24,8 +25,9 @@ public class Comment implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "comment_id", nullable = false)
-  private Long commentId;
+  private Long id;
 
+  @Nationalized
   @Column(name = "content", nullable = false)
   private String content;
 
@@ -46,19 +48,21 @@ public class Comment implements Serializable {
   public Comment() {
   }
 
-  public Comment(Long commentId, String content, String userId, Timestamp createAt, Timestamp updateAt) {
-    this.commentId = commentId;
+  public Comment(Long id, String content, Post post, User user, Timestamp createAt, Timestamp updateAt) {
+    this.id = id;
     this.content = content;
+    this.post = post;
+    this.user = user;
     this.createAt = createAt;
     this.updateAt = updateAt;
   }
 
-  public Long getCommentId() {
-    return commentId;
+  public Long getId() {
+    return id;
   }
 
-  public void setCommentId(Long commentId) {
-    this.commentId = commentId;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getContent() {
@@ -67,6 +71,22 @@ public class Comment implements Serializable {
 
   public void setContent(String content) {
     this.content = content;
+  }
+
+  public Post getPost() {
+    return post;
+  }
+
+  public void setPost(Post post) {
+    this.post = post;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
   }
 
   public Timestamp getCreateAt() {
@@ -84,4 +104,7 @@ public class Comment implements Serializable {
   public void setUpdateAt(Timestamp updateAt) {
     this.updateAt = updateAt;
   }
+
+  
+  
 }

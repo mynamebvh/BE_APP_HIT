@@ -31,7 +31,7 @@ public class Post implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "post_id", nullable = false)
-  private Long postId;
+  private Long id;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
@@ -55,9 +55,9 @@ public class Post implements Serializable {
   public Post() {
   }
 
-  public Post(Long postId, User user, Collection<Comment> comments, String content, Timestamp createAt,
+  public Post(Long id, User user, Collection<Comment> comments, String content, Timestamp createAt,
       Timestamp updateAt) {
-    this.postId = postId;
+    this.id = id;
     this.user = user;
     this.comments = comments;
     this.content = content;
@@ -70,11 +70,11 @@ public class Post implements Serializable {
   }
 
   public Long getPostId() {
-    return postId;
+    return id;
   }
 
   public void setPostId(Long postId) {
-    this.postId = postId;
+    this.id = postId;
   }
 
   public User getUser() {
