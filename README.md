@@ -16,6 +16,7 @@
       - [API Login](#api-login)
       - [API Signup](#api-signup)
     - API POST
+    - API COMMENT
 
 # INTRODUCTION
 
