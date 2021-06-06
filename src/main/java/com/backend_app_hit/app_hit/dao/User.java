@@ -2,7 +2,7 @@ package com.backend_app_hit.app_hit.dao;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -58,15 +58,15 @@ public class User implements Serializable {
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonIgnore
-  private Collection<UserClass> userClasses;
+  private List<UserClass> userClasses;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonIgnore
-  private Collection<Post> posts;
+  private List<Post> posts;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonIgnore
-  private Collection<Comment> comments;
+  private List<Comment> comments;
 
   @CreationTimestamp
   private Timestamp createAt;
@@ -77,10 +77,8 @@ public class User implements Serializable {
   public User() {
   }
 
-  public User(Long id, String fullName, String userName, String password, String birthday, String role, String phone,
-      String email, Long point, Collection<UserClass> userClasses, Collection<Post> posts, Collection<Comment> comments,
-      Timestamp createAt, Timestamp updateAt) {
-    this.id = id;
+  public User(String fullName, String userName, String password, String birthday, String role, String phone,
+      String email, Long point, List<UserClass> userClasses, List<Post> posts, List<Comment> comments) {
     this.fullName = fullName;
     this.userName = userName;
     this.password = password;
@@ -92,14 +90,8 @@ public class User implements Serializable {
     this.userClasses = userClasses;
     this.posts = posts;
     this.comments = comments;
-    this.createAt = createAt;
-    this.updateAt = updateAt;
   }
-
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
-
+  
   public Long getId() {
     return id;
   }
@@ -172,27 +164,27 @@ public class User implements Serializable {
     this.point = point;
   }
 
-  public Collection<UserClass> getUserClasses() {
+  public List<UserClass> getUserClasses() {
     return userClasses;
   }
 
-  public void setUserClasses(Collection<UserClass> userClasses) {
+  public void setUserClasses(List<UserClass> userClasses) {
     this.userClasses = userClasses;
   }
 
-  public Collection<Post> getPosts() {
+  public List<Post> getPosts() {
     return posts;
   }
 
-  public void setPosts(Collection<Post> posts) {
+  public void setPosts(List<Post> posts) {
     this.posts = posts;
   }
 
-  public Collection<Comment> getComments() {
+  public List<Comment> getComments() {
     return comments;
   }
 
-  public void setComments(Collection<Comment> comments) {
+  public void setComments(List<Comment> comments) {
     this.comments = comments;
   }
 

@@ -23,7 +23,7 @@ public class UserClass implements Serializable {
   private Long userClassId;
 
   @ManyToOne
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "user_id", unique = true)
   private User user;
 
   @ManyToOne
@@ -32,6 +32,13 @@ public class UserClass implements Serializable {
 
   public UserClass() {
   }
+
+  
+  public UserClass(User user, ClassRoom classRoom) {
+    this.user = user;
+    this.classRoom = classRoom;
+  }
+
 
   public static long getSerialversionuid() {
     return serialVersionUID;

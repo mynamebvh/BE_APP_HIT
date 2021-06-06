@@ -2,7 +2,7 @@ package com.backend_app_hit.app_hit.dao;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,7 +29,7 @@ public class ClassRoom implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "class_id", nullable = false)
-  private Long classId;
+  private Long id;
 
   @Nationalized
   @Column(name = "leader", nullable = false)
@@ -39,15 +39,15 @@ public class ClassRoom implements Serializable {
   @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "quantity", nullable = false)
+  @Column(name = "quantity", nullable = true)
   private Long quantity;
 
-  @Column(name = "folder_url", nullable = false)
+  @Column(name = "folder_url", nullable = true)
   private String folderUrl;
 
   @OneToMany(mappedBy = "classRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonIgnore
-  private Collection<UserClass> userClasses;
+  private List<UserClass> userClasses;
 
   @CreationTimestamp
   private Timestamp createAt;
@@ -58,23 +58,21 @@ public class ClassRoom implements Serializable {
   public ClassRoom() {
   }
 
-  public ClassRoom(Long classId, String leader, String name, Long quantity, String folderUrl, Timestamp createAt,
-      Timestamp updateAt) {
-    this.classId = classId;
+  public ClassRoom(Long id, String leader, String name, Long quantity, String folderUrl, List<UserClass> userClasses) {
+    this.id = id;
     this.leader = leader;
     this.name = name;
     this.quantity = quantity;
     this.folderUrl = folderUrl;
-    this.createAt = createAt;
-    this.updateAt = updateAt;
+    this.userClasses = userClasses;
   }
 
-  public Long getClassId() {
-    return classId;
+  public Long getId() {
+    return id;
   }
 
-  public void setClassId(Long classId) {
-    this.classId = classId;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getLeader() {
@@ -109,6 +107,14 @@ public class ClassRoom implements Serializable {
     this.folderUrl = folderUrl;
   }
 
+  public List<UserClass> getUserClasses() {
+    return userClasses;
+  }
+
+  public void setUserClasses(List<UserClass> userClasses) {
+    this.userClasses = userClasses;
+  }
+
   public Timestamp getCreateAt() {
     return createAt;
   }
@@ -125,4 +131,5 @@ public class ClassRoom implements Serializable {
     this.updateAt = updateAt;
   }
 
+  
 }
