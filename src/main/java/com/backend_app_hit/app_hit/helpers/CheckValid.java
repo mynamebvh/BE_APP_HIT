@@ -67,7 +67,7 @@ public class CheckValid {
       throw new InvalidException("Invalid fullname");
     }
     pattern = Pattern.compile(regexUsername);
-    matcher = pattern.matcher(signUpDTO.getUserName());
+    matcher = pattern.matcher(signUpDTO.getUsername());
     if (!matcher.find()) {
       throw new InvalidException("Invalid username");
     }

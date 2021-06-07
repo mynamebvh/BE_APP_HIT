@@ -11,9 +11,9 @@ public class SignUpDTO {
   public SignUpDTO() {
   }
 
-  public SignUpDTO(String fullName, String userName, String password, String email, String phone, String birthday) {
+  public SignUpDTO(String fullName, String username, String password, String email, String phone, String birthday) {
     this.fullName = fullName;
-    this.username = userName;
+    this.username = username;
     this.password = password;
     this.email = email;
     this.phone = phone;
@@ -28,12 +28,12 @@ public class SignUpDTO {
     this.fullName = fullName;
   }
 
-  public String getUserName() {
+  public String getUsername() {
     return username;
   }
 
-  public void setUserName(String userName) {
-    this.username = userName;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   public String getPassword() {
@@ -42,14 +42,6 @@ public class SignUpDTO {
 
   public void setPassword(String password) {
     this.password = password;
-  }
-
-  public String getBirthday() {
-    return birthday;
-  }
-
-  public void setBirthday(String birthday) {
-    this.birthday = birthday;
   }
 
   public String getEmail() {
@@ -68,10 +60,15 @@ public class SignUpDTO {
     this.phone = phone;
   }
 
-  @Override
-  public String toString() {
-    return "SignUpDTO [birthday=" + birthday + ", email=" + email + ", fullName=" + fullName + ", password=" + password
-        + ", phone=" + phone + ", userName=" + username + "]";
+  public String getBirthday() {
+    return birthday;
   }
 
+  public void setBirthday(String birthday) {
+    this.birthday = birthday;
+  }
+
+  
+
+  
 }
