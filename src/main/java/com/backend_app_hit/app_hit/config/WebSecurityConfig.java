@@ -37,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.csrf().disable().authorizeRequests().antMatchers("/api/v1/auth/**").permitAll()
         .antMatchers("/api/v1/user/**", "/api/v1/post/**", "/api/v1/comment/**", "/api/v1/class/**").authenticated()
         .antMatchers("api/v1/admin/**").hasRole("ADMIN").and().sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().exceptionHandling();
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
   }

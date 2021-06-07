@@ -120,7 +120,7 @@ public class PostController {
         if (!post.getUser().getUserName().equals(userName)) {
             throw new NotFoundException("Không có quyền xoá bài viết này");
         }
-
+        postRepository.deleteById(postId);
         return ResponseEntity.status(HttpStatus.OK).body("Xoá thành công");
     }
 }
