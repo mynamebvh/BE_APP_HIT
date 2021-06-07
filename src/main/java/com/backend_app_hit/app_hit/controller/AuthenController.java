@@ -1,5 +1,7 @@
 package com.backend_app_hit.app_hit.controller;
 
+import java.util.Optional;
+
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,16 +20,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -55,7 +58,14 @@ public class AuthenController {
     } catch (Exception e) {
       throw new LoginException("Incorrect username or password");
     }
-    User user = userRepository.findByUserName(request.getUsername());
+
+    Optional<User> uOptional = userRepository.findByUserName(request.getUsername());
+    if (!uOptional.isPresent()) {
+      throw new UsernameNotFoundException("Username không tồn tại");
+    }
+     
+    User user = uOptional.get();
+
     String token = jwtUtil.generateToken(request.getUsername());
     return ResponseEntity
         .ok(new AuthenticationResponse(200, token, user.getId(), user.getUserName(), user.getRole()));
@@ -63,11 +73,14 @@ public class AuthenController {
 
   @PostMapping(value = "/signup")
   public ResponseEntity<?> register(@RequestBody SignUpDTO signUpDTO) {
-    User oldUser = userRepository.findByUserName(signUpDTO.getUserName());
+    Optional<User> uOptional = userRepository.findByUserName(signUpDTO.getUserName());
+
+    User oldUser = uOptional.get();
+
     if (oldUser != null) {
       throw new InvalidException("Invalid user");
     }
-    System.out.println(signUpDTO.toString());
+    
     User newUser = ConvertObject.fromSignUpDTOToUserDAO(signUpDTO);
     if (newUser == null) {
       throw new InvalidException("Invalid user");

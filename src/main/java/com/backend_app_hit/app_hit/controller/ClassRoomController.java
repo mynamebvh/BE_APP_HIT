@@ -107,9 +107,28 @@ public class ClassRoomController {
     }
   }
 
+  @GetMapping("/{classId}/listStudent")
+  public ResponseEntity<?> getListMember(@PathVariable Long classId) {
+    try {
+      Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
+
+      if (!classOptional.isPresent()) {
+        throw new InvalidException("Lớp không tồn tại");
+      }
+      ClassRoom classRoom = classOptional.get();
+
+      List<UserClass> userClasses = userClassRepository.findByClassRoomId(classRoom.getId());
+      return ResponseEntity.status(HttpStatus.OK).body(userClasses);
+    } catch (Exception e) {
+      throw new NotFoundException(e.getMessage());
+    }
+  }
+
   @PostMapping("/addStudent")
   public ResponseEntity<?> addStudent(@RequestBody ClassStudentDTO classStudentDTOs) {
     try {
+      Optional<User> uOptional = null;
+      User user = null;
 
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classStudentDTOs.getClassId());
 
@@ -118,14 +137,38 @@ public class ClassRoomController {
       }
       ClassRoom classRoom = classOptional.get();
       List<UserClass> userClasses = new ArrayList<UserClass>();
-      User user = null;
+
       for (String username : classStudentDTOs.getUsername()) {
-        user = userRepository.findByUserName(username);
+        uOptional = userRepository.findByUserName(username);
+        user = uOptional.get();
         userClasses.add(new UserClass(user, classRoom));
       }
 
       userClassRepository.saveAll(userClasses);
       return ResponseEntity.status(HttpStatus.OK).body(classRoom);
+    } catch (Exception e) {
+      throw new NotFoundException(e.getMessage());
+    }
+  }
+
+  @DeleteMapping("/{classId}/{username}")
+  public ResponseEntity<?> deleteStudentFromClass(@PathVariable Long classId, @PathVariable String username) {
+    try {
+      Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
+
+      if (!classOptional.isPresent()) {
+        throw new InvalidException("Lớp không tồn tại");
+      }
+      ClassRoom classRoom = classOptional.get();
+
+      Optional<User> uOptional = userRepository.findByUserName(username);
+      if (!uOptional.isPresent()) {
+        throw new InvalidException("Người dùng không tồn tại");
+      }
+
+      User user = uOptional.get();
+
+      return ResponseEntity.status(HttpStatus.OK).body("Xoá thành công");
     } catch (Exception e) {
       throw new NotFoundException(e.getMessage());
     }

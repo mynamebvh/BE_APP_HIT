@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "UserClass")
 public class UserClass implements Serializable {
@@ -28,6 +30,7 @@ public class UserClass implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "class_id")
+  @JsonIgnore
   private ClassRoom classRoom;
 
   public UserClass() {

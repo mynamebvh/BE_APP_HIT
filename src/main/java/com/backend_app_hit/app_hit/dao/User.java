@@ -38,7 +38,9 @@ public class User implements Serializable {
   @Column(name = "user_name", nullable = false, unique = true)
   private String userName;
 
+ 
   @Column(name = "password", nullable = false)
+  @JsonIgnore
   private String password;
 
   @Column(name = "birthday", nullable = false)

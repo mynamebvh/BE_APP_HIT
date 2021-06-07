@@ -1,6 +1,7 @@
 package com.backend_app_hit.app_hit.services;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import com.backend_app_hit.app_hit.dao.User;
@@ -22,10 +23,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByUserName(username);
-    if (user == null) {
+    Optional<User> uOptional = userRepository.findByUserName(username);
+    if (!uOptional.isPresent()) {
       throw new UsernameNotFoundException("Username không tồn tại");
     }
+     
+    User user = uOptional.get();
 
     Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
     grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole()));

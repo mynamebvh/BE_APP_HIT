@@ -1,5 +1,7 @@
 package com.backend_app_hit.app_hit.services.impl;
 
+import java.util.Optional;
+
 import com.backend_app_hit.app_hit.dao.User;
 import com.backend_app_hit.app_hit.exception.ForbiddenException;
 import com.backend_app_hit.app_hit.repository.UserRepository;
@@ -7,6 +9,7 @@ import com.backend_app_hit.app_hit.services.UserAuthorizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service("userAuthorizer")
@@ -31,7 +34,14 @@ public class UserAuthorizerImpl implements UserAuthorizer {
     }
 
     User userAuth = (User) authentication.getPrincipal();
-    User user = userRepository.findByUserName(userAuth.getUserName());
+
+    Optional<User> uOptional = userRepository.findByUserName(userAuth.getUserName());
+    if (!uOptional.isPresent()) {
+      throw new UsernameNotFoundException("Username không tồn tại");
+    }
+     
+    User user = uOptional.get();
+   
 
     if (user.getId() != userId) {
       throw new ForbiddenException("Access denied");
@@ -41,9 +51,14 @@ public class UserAuthorizerImpl implements UserAuthorizer {
 
   @Override
   public boolean authorizeUser(Authentication authentication, Long userId) {
-    User userAuthentication = (User) authentication.getPrincipal();
+    User userAuth = (User) authentication.getPrincipal();
 
-    User user = userRepository.findByUserName(userAuthentication.getUserName());
+    Optional<User> uOptional = userRepository.findByUserName(userAuth.getUserName());
+    if (!uOptional.isPresent()) {
+      throw new UsernameNotFoundException("Username không tồn tại");
+    }
+     
+    User user = uOptional.get();
 
     if (user.getId() != userId) {
       throw new ForbiddenException("Access denied");

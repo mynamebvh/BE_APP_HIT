@@ -17,6 +17,7 @@ import com.backend_app_hit.app_hit.utils.GetUserNameByContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -42,7 +43,14 @@ public class PostController {
             String userName = GetUserNameByContext.getUserName();
 
             Post post = new Post();
-            User user = userRepository.findByUserName(postDTO.getUsername());
+
+            Optional<User> uOptional = userRepository.findByUserName(postDTO.getUsername());
+            if (!uOptional.isPresent()) {
+                throw new UsernameNotFoundException("Username không tồn tại");
+            }
+
+            User user = uOptional.get();
+
             post.setContent(postDTO.getContent());
             post.setUser(user);
             postRepository.save(post);
@@ -61,7 +69,14 @@ public class PostController {
 
         try {
             String userName = GetUserNameByContext.getUserName();
-            User user = userRepository.findByUserName(userName);
+
+            Optional<User> uOptional = userRepository.findByUserName(userName);
+            if (!uOptional.isPresent()) {
+                throw new UsernameNotFoundException("Username không tồn tại");
+            }
+
+            User user = uOptional.get();
+
             List<Post> posList = postRepository.findByUserId(user.getId());
 
             return ResponseEntity.ok(new PostResponse(user.getUserName(), posList));
