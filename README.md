@@ -17,7 +17,7 @@
 
 # INTRODUCTION
 
-1 sản phẩm của nhóm giúp quản lí clb HIT - ĐHCNHN
+1 sản phẩm của nhóm giúp quản lí CLB HIT - ĐHCNHN
 
 # TEAM MEMBER
 
