@@ -8,9 +8,6 @@
     - API User
     - API ClassRoom
   - API Member
-
-    - API
-
   - API Global
     - API Authentication
       - [API Login](#api-login)
