@@ -56,7 +56,7 @@ public class CommentController {
       String userName = GetUserNameByContext.getUserName();
       Optional<Post> postOptional = postRepository.findById(commentDTO.getPostId());
 
-      Optional<User> uOptional = userRepository.findByUserName(userName);
+      Optional<User> uOptional = userRepository.findByUsername(userName);
       if (!uOptional.isPresent()) {
         throw new UsernameNotFoundException("Username không tồn tại");
       }
@@ -91,7 +91,7 @@ public class CommentController {
 
       Comment comment = commentOptional.get();
 
-      if (comment.getUser().getUserName().equals(userName)) {
+      if (comment.getUser().getUsername().equals(userName)) {
         commentRepository.deleteById(commentId);
       } else {
         throw new NotFoundException("Bạn không có quyền");
@@ -116,7 +116,7 @@ public class CommentController {
 
       Comment comment = commentOptional.get();
 
-      if (comment.getUser().getUserName().equals(userName)) {
+      if (comment.getUser().getUsername().equals(userName)) {
         comment.setContent(content);
         commentRepository.save(comment);
       } else {

@@ -2,7 +2,6 @@ package com.backend_app_hit.app_hit.dao;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,18 +10,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
-@Table(name = "UserClass")
-public class UserClass implements Serializable {
-
+@Table(name = "UserLeader")
+public class UserLeader implements Serializable{
+  
   private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "user_class_id")
-  private Long userClassId;
+  private Long id;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
@@ -30,29 +26,18 @@ public class UserClass implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "class_id")
-  @JsonIgnore
   private ClassRoom classRoom;
 
-  public UserClass() {
+  public UserLeader() {
   }
 
-  
-  public UserClass(User user, ClassRoom classRoom) {
+  public UserLeader(User user, ClassRoom classRoom) {
     this.user = user;
     this.classRoom = classRoom;
   }
 
-
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
-
-  public Long getUserClassId() {
-    return userClassId;
-  }
-
-  public void setUserClassId(Long userClassId) {
-    this.userClassId = userClassId;
+  public Long getId() {
+    return id;
   }
 
   public User getUser() {
@@ -71,4 +56,5 @@ public class UserClass implements Serializable {
     this.classRoom = classRoom;
   }
 
+  
 }

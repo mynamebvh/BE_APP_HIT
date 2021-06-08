@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import com.backend_app_hit.app_hit.dao.ClassRoom;
-import com.backend_app_hit.app_hit.dao.User;
 import com.backend_app_hit.app_hit.dao.UserClass;
+import com.backend_app_hit.app_hit.dao.UserLeader;
 import com.backend_app_hit.app_hit.dto.ClassRoomDTO;
-import com.backend_app_hit.app_hit.dto.ClassStudentDTO;
 import com.backend_app_hit.app_hit.exception.InvalidException;
 import com.backend_app_hit.app_hit.exception.NotFoundException;
 import com.backend_app_hit.app_hit.repository.ClassRoomRepository;
 import com.backend_app_hit.app_hit.repository.UserClassRepository;
+import com.backend_app_hit.app_hit.repository.UserLeaderRepository;
 import com.backend_app_hit.app_hit.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Transactional
 @RestController
 @RequestMapping("/api/v1/class")
 public class ClassRoomController {
@@ -39,6 +42,9 @@ public class ClassRoomController {
 
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  private UserLeaderRepository userLeaderRepository;
 
   @GetMapping("/{classId}")
   public ResponseEntity<?> getClass(@PathVariable Long classId) {
@@ -60,7 +66,23 @@ public class ClassRoomController {
   @PostMapping("/")
   public ResponseEntity<?> createClass(@RequestBody ClassRoomDTO classRoomDTO) {
     try {
-      ClassRoom classRoom = new ClassRoom(null, classRoomDTO.getLeader(), classRoomDTO.getName(), null, null, null);
+
+      ClassRoom classRoom = new ClassRoom(classRoomDTO.getName());
+      classRoomRepository.save(classRoom);
+
+      List<UserClass> userClassList = new ArrayList<UserClass>();
+      List<UserLeader> userLeaderList = new ArrayList<UserLeader>();
+
+      classRoomDTO.getMemberList().forEach((username) -> {
+        userClassList.add(new UserClass(userRepository.findByUsername(username).get(), classRoom));
+      });
+
+      classRoomDTO.getLeaderList().forEach((username) -> {
+        userLeaderList.add(new UserLeader(userRepository.findByUsername(username).get(), classRoom));
+      });
+
+      classRoom.setUserClasses(userClassList);
+      classRoom.setUserLeaders(userLeaderList);
       classRoomRepository.save(classRoom);
 
       return ResponseEntity.status(HttpStatus.CREATED).body(classRoom);
@@ -72,6 +94,9 @@ public class ClassRoomController {
   @PatchMapping("/{classId}")
   public ResponseEntity<?> updateClass(@PathVariable Long classId, @RequestBody ClassRoomDTO classRoomDTO) {
     try {
+      List<UserClass> userClassList = new ArrayList<UserClass>();
+      List<UserLeader> userLeaderList = new ArrayList<UserLeader>();
+
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
 
       if (!classOptional.isPresent()) {
@@ -79,8 +104,17 @@ public class ClassRoomController {
       }
       ClassRoom classRoom = classOptional.get();
 
-      classRoom.setLeader(classRoomDTO.getLeader());
+      classRoomDTO.getMemberList().forEach((username) -> {
+        userClassList.add(new UserClass(userRepository.findByUsername(username).get(), classRoom));
+      });
+
+      classRoomDTO.getLeaderList().forEach((username) -> {
+        userLeaderList.add(new UserLeader(userRepository.findByUsername(username).get(), classRoom));
+      });
+
       classRoom.setName(classRoomDTO.getName());
+      classRoom.setUserClasses(userClassList);
+      classRoom.setUserLeaders(userLeaderList);
 
       classRoomRepository.save(classRoom);
 
@@ -124,49 +158,18 @@ public class ClassRoomController {
     }
   }
 
-  @PostMapping("/addStudent")
-  public ResponseEntity<?> addStudent(@RequestBody ClassStudentDTO classStudentDTOs) {
-    try {
-      Optional<User> uOptional = null;
-      User user = null;
-
-      Optional<ClassRoom> classOptional = classRoomRepository.findById(classStudentDTOs.getClassId());
-
-      if (!classOptional.isPresent()) {
-        throw new InvalidException("Lớp không tồn tại");
-      }
-      ClassRoom classRoom = classOptional.get();
-      List<UserClass> userClasses = new ArrayList<UserClass>();
-
-      for (String username : classStudentDTOs.getUsername()) {
-        uOptional = userRepository.findByUserName(username);
-        user = uOptional.get();
-        userClasses.add(new UserClass(user, classRoom));
-      }
-
-      userClassRepository.saveAll(userClasses);
-      return ResponseEntity.status(HttpStatus.OK).body(classRoom);
-    } catch (Exception e) {
-      throw new NotFoundException(e.getMessage());
-    }
-  }
-
-  @DeleteMapping("/{classId}/{username}")
-  public ResponseEntity<?> deleteStudentFromClass(@PathVariable Long classId, @PathVariable String username) {
+  @DeleteMapping("/{classId}/deleteStudent")
+  public ResponseEntity<?> deleteStudentFromClass(@PathVariable Long classId, @RequestBody List<String> usernameList) {
     try {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
-
       if (!classOptional.isPresent()) {
         throw new InvalidException("Lớp không tồn tại");
       }
-      ClassRoom classRoom = classOptional.get();
-
-      Optional<User> uOptional = userRepository.findByUserName(username);
-      if (!uOptional.isPresent()) {
-        throw new InvalidException("Người dùng không tồn tại");
-      }
-
-      User user = uOptional.get();
+      
+      usernameList.forEach((username) -> {
+        userClassRepository.deleteByUserIdAndClassRoomId(userRepository.findByUsername(username).get().getId(),
+        classOptional.get().getId());
+      });
 
       return ResponseEntity.status(HttpStatus.OK).body("Xoá thành công");
     } catch (Exception e) {

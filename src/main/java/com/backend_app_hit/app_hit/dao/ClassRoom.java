@@ -32,15 +32,8 @@ public class ClassRoom implements Serializable {
   private Long id;
 
   @Nationalized
-  @Column(name = "leader", nullable = false)
-  private String leader;
-
-  @Nationalized
   @Column(name = "name", nullable = false)
   private String name;
-
-  @Column(name = "quantity", nullable = true)
-  private Long quantity;
 
   @Column(name = "folder_url", nullable = true)
   private String folderUrl;
@@ -48,6 +41,10 @@ public class ClassRoom implements Serializable {
   @OneToMany(mappedBy = "classRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonIgnore
   private List<UserClass> userClasses;
+
+  @OneToMany(mappedBy = "classRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonIgnore
+  private List<UserLeader> userLeaders;
 
   @CreationTimestamp
   private Timestamp createAt;
@@ -58,13 +55,8 @@ public class ClassRoom implements Serializable {
   public ClassRoom() {
   }
 
-  public ClassRoom(Long id, String leader, String name, Long quantity, String folderUrl, List<UserClass> userClasses) {
-    this.id = id;
-    this.leader = leader;
+  public ClassRoom(String name) {
     this.name = name;
-    this.quantity = quantity;
-    this.folderUrl = folderUrl;
-    this.userClasses = userClasses;
   }
 
   public Long getId() {
@@ -75,28 +67,12 @@ public class ClassRoom implements Serializable {
     this.id = id;
   }
 
-  public String getLeader() {
-    return leader;
-  }
-
-  public void setLeader(String leader) {
-    this.leader = leader;
-  }
-
   public String getName() {
     return name;
   }
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public Long getQuantity() {
-    return quantity;
-  }
-
-  public void setQuantity(Long quantity) {
-    this.quantity = quantity;
   }
 
   public String getFolderUrl() {
@@ -115,6 +91,14 @@ public class ClassRoom implements Serializable {
     this.userClasses = userClasses;
   }
 
+  public List<UserLeader> getUserLeaders() {
+    return userLeaders;
+  }
+
+  public void setUserLeaders(List<UserLeader> userLeaders) {
+    this.userLeaders = userLeaders;
+  }
+
   public Timestamp getCreateAt() {
     return createAt;
   }
@@ -131,5 +115,4 @@ public class ClassRoom implements Serializable {
     this.updateAt = updateAt;
   }
 
-  
 }

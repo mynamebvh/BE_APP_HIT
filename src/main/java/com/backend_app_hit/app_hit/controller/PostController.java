@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import com.backend_app_hit.app_hit.dao.Post;
 import com.backend_app_hit.app_hit.dao.User;
-import com.backend_app_hit.app_hit.dto.PostDTO;
 import com.backend_app_hit.app_hit.exception.InvalidException;
 import com.backend_app_hit.app_hit.exception.NotFoundException;
 import com.backend_app_hit.app_hit.models.PostResponse;
@@ -38,20 +37,20 @@ public class PostController {
     private UserRepository userRepository;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createPost(@RequestBody PostDTO postDTO) {
+    public ResponseEntity<?> createPost(@RequestBody String content) {
         try {
             String userName = GetUserNameByContext.getUserName();
 
             Post post = new Post();
 
-            Optional<User> uOptional = userRepository.findByUserName(postDTO.getUsername());
+            Optional<User> uOptional = userRepository.findByUsername(userName);
             if (!uOptional.isPresent()) {
                 throw new UsernameNotFoundException("Username không tồn tại");
             }
 
             User user = uOptional.get();
 
-            post.setContent(postDTO.getContent());
+            post.setContent(content);
             post.setUser(user);
             postRepository.save(post);
 
@@ -70,7 +69,7 @@ public class PostController {
         try {
             String userName = GetUserNameByContext.getUserName();
 
-            Optional<User> uOptional = userRepository.findByUserName(userName);
+            Optional<User> uOptional = userRepository.findByUsername(userName);
             if (!uOptional.isPresent()) {
                 throw new UsernameNotFoundException("Username không tồn tại");
             }
@@ -79,7 +78,7 @@ public class PostController {
 
             List<Post> posList = postRepository.findByUserId(user.getId());
 
-            return ResponseEntity.ok(new PostResponse(user.getUserName(), posList));
+            return ResponseEntity.ok(new PostResponse(user.getUsername(), posList));
         } catch (Exception e) {
             throw new InvalidException(e.getMessage());
         }
@@ -96,7 +95,7 @@ public class PostController {
 
         Post post = postOptional.get();
 
-        if (!post.getUser().getUserName().equals(userName)) {
+        if (!post.getUser().getUsername().equals(userName)) {
             throw new NotFoundException("Không có quyền sửa bài viết này");
         }
 
@@ -117,7 +116,7 @@ public class PostController {
 
         Post post = postOptional.get();
 
-        if (!post.getUser().getUserName().equals(userName)) {
+        if (!post.getUser().getUsername().equals(userName)) {
             throw new NotFoundException("Không có quyền xoá bài viết này");
         }
         postRepository.deleteById(postId);

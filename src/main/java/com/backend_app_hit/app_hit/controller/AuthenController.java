@@ -3,8 +3,6 @@ package com.backend_app_hit.app_hit.controller;
 import java.util.Optional;
 
 import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.backend_app_hit.app_hit.dao.User;
 import com.backend_app_hit.app_hit.dto.SignUpDTO;
@@ -20,13 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +53,7 @@ public class AuthenController {
       throw new LoginException("Incorrect username or password");
     }
 
-    Optional<User> uOptional = userRepository.findByUserName(request.getUsername());
+    Optional<User> uOptional = userRepository.findByUsername(request.getUsername());
     if (!uOptional.isPresent()) {
       throw new UsernameNotFoundException("Username không tồn tại");
     }
@@ -68,12 +62,12 @@ public class AuthenController {
 
     String token = jwtUtil.generateToken(request.getUsername());
     return ResponseEntity
-        .ok(new AuthenticationResponse(200, token, user.getId(), user.getUserName(), user.getRole()));
+        .ok(new AuthenticationResponse(200, token, user.getId(), user.getUsername(), user.getRole()));
   }
 
   @PostMapping(value = "/signup")
   public ResponseEntity<?> register(@RequestBody SignUpDTO signUpDTO) {
-    Optional<User> uOptional = userRepository.findByUserName(signUpDTO.getUsername());
+    Optional<User> uOptional = userRepository.findByUsername(signUpDTO.getUsername());
 
     if(uOptional.isPresent()){
       throw new InvalidException("user not exits");
@@ -87,19 +81,10 @@ public class AuthenController {
     newUser.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
     userRepository.save(newUser);
 
-    final UserDetails userDetails = userService.loadUserByUsername(newUser.getUserName());
+    final UserDetails userDetails = userService.loadUserByUsername(newUser.getUsername());
     final String jwt = jwtUtil.generateToken(userDetails.getUsername());
     return ResponseEntity
-        .ok(new AuthenticationResponse(201, jwt, newUser.getId(), newUser.getUserName(), newUser.getRole()));
-  }
-
-  @GetMapping(value = "/logout")
-  public String logout(HttpServletRequest request, HttpServletResponse response) {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    if (auth != null) {
-      new SecurityContextLogoutHandler().logout(request, response, auth);
-    }
-    return "redirect:/";
+        .ok(new AuthenticationResponse(201, jwt, newUser.getId(), newUser.getUsername(), newUser.getRole()));
   }
 
 }

@@ -35,7 +35,7 @@ public class UserAuthorizerImpl implements UserAuthorizer {
 
     User userAuth = (User) authentication.getPrincipal();
 
-    Optional<User> uOptional = userRepository.findByUserName(userAuth.getUserName());
+    Optional<User> uOptional = userRepository.findByUsername(userAuth.getUsername());
     if (!uOptional.isPresent()) {
       throw new UsernameNotFoundException("Username không tồn tại");
     }
@@ -53,7 +53,7 @@ public class UserAuthorizerImpl implements UserAuthorizer {
   public boolean authorizeUser(Authentication authentication, Long userId) {
     User userAuth = (User) authentication.getPrincipal();
 
-    Optional<User> uOptional = userRepository.findByUserName(userAuth.getUserName());
+    Optional<User> uOptional = userRepository.findByUsername(userAuth.getUsername());
     if (!uOptional.isPresent()) {
       throw new UsernameNotFoundException("Username không tồn tại");
     }

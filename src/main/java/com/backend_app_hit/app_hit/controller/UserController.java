@@ -34,7 +34,7 @@ public class UserController {
         userName = principal.toString();
       }
 
-      Optional<User> uOptional = userRepository.findByUserName(userName);
+      Optional<User> uOptional = userRepository.findByUsername(userName);
       if (!uOptional.isPresent()) {
         throw new UsernameNotFoundException("Username không tồn tại");
       }

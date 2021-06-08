@@ -36,7 +36,7 @@ public class User implements Serializable {
   private String fullName;
 
   @Column(name = "user_name", nullable = false, unique = true)
-  private String userName;
+  private String username;
 
  
   @Column(name = "password", nullable = false)
@@ -70,6 +70,10 @@ public class User implements Serializable {
   @JsonIgnore
   private List<Comment> comments;
 
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonIgnore
+  private List<UserLeader> userLeaders;
+
   @CreationTimestamp
   private Timestamp createAt;
 
@@ -82,7 +86,7 @@ public class User implements Serializable {
   public User(String fullName, String userName, String password, String birthday, String role, String phone,
       String email, Long point, List<UserClass> userClasses, List<Post> posts, List<Comment> comments) {
     this.fullName = fullName;
-    this.userName = userName;
+    this.username = userName;
     this.password = password;
     this.birthday = birthday;
     this.role = role;
@@ -110,12 +114,20 @@ public class User implements Serializable {
     this.fullName = fullName;
   }
 
-  public String getUserName() {
-    return userName;
+  public String getUsername() {
+    return username;
   }
 
-  public void setUserName(String userName) {
-    this.userName = userName;
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public List<UserLeader> getUserLeaders() {
+    return userLeaders;
+  }
+
+  public void setUserLeaders(List<UserLeader> userLeaders) {
+    this.userLeaders = userLeaders;
   }
 
   public String getPassword() {

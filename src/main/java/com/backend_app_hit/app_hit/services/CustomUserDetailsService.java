@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Optional<User> uOptional = userRepository.findByUserName(username);
+    Optional<User> uOptional = userRepository.findByUsername(username);
     if (!uOptional.isPresent()) {
       throw new UsernameNotFoundException("Username không tồn tại");
     }
@@ -32,7 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
     grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole()));
-    return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
+    return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
         grantedAuthorities);
   }
 }
