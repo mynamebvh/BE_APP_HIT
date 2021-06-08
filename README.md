@@ -73,7 +73,7 @@ POST localhost:8080/api/v1/auth/signup
 
 ```
 {
-    "fullName": "Hoang Bui",
+    "fullname": "Hoang Bui",
     "userName": "2019606127",
     "password": "Hoangdz23@",
     "email": "mynamebvh@gmail.com",
