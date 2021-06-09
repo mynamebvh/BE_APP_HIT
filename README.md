@@ -1,4 +1,6 @@
 ## ⭐ GETTING STARTED
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmynamebvh%2FBE_APP_HIT.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmynamebvh%2FBE_APP_HIT?ref=badge_shield)
+
 
 - [Introduction](#🏷-introduction)
 - [Team Member](#team-member)
@@ -97,3 +99,7 @@ birthday: đang fix :v
 ```
 Update
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmynamebvh%2FBE_APP_HIT.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmynamebvh%2FBE_APP_HIT?ref=badge_large)
