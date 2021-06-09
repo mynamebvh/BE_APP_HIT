@@ -3,7 +3,6 @@
 
 
 - [Introduction](#🏷-introduction)
-- [Team Member](#team-member)
 
 # INTRODUCTION
 
