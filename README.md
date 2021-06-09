@@ -4,18 +4,6 @@
 
 - [Introduction](#🏷-introduction)
 - [Team Member](#team-member)
-- [API Docs](#api-docs)
-
-  - API ADMIN
-    - API User
-    - API ClassRoom
-  - API Member
-  - API Global
-    - API Authentication
-      - [API Login](#api-login)
-      - [API Signup](#api-signup)
-    - API POST
-    - API COMMENT
 
 # INTRODUCTION
 
