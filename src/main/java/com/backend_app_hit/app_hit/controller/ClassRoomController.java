@@ -12,6 +12,7 @@ import com.backend_app_hit.app_hit.dao.UserLeader;
 import com.backend_app_hit.app_hit.dto.ClassRoomDTO;
 import com.backend_app_hit.app_hit.exception.InvalidException;
 import com.backend_app_hit.app_hit.exception.NotFoundException;
+import com.backend_app_hit.app_hit.models.ClassRoomResponse;
 import com.backend_app_hit.app_hit.repository.ClassRoomRepository;
 import com.backend_app_hit.app_hit.repository.UserClassRepository;
 import com.backend_app_hit.app_hit.repository.UserLeaderRepository;
@@ -57,7 +58,7 @@ public class ClassRoomController {
       }
 
       ClassRoom classRoom = classOptional.get();
-      return ResponseEntity.status(HttpStatus.OK).body(classRoom);
+      return ResponseEntity.status(HttpStatus.OK).body(new ClassRoomResponse(200, "Thành công", classRoom, null, null));
     } catch (Exception e) {
       throw new NotFoundException(e.getMessage());
     }
@@ -85,7 +86,8 @@ public class ClassRoomController {
       classRoom.setUserLeaders(userLeaderList);
       classRoomRepository.save(classRoom);
 
-      return ResponseEntity.status(HttpStatus.CREATED).body(classRoom);
+      return ResponseEntity.status(HttpStatus.CREATED)
+          .body(new ClassRoomResponse(201, "Tạo thành công", classRoom, null, null));
     } catch (Exception e) {
       throw new NotFoundException(e.getMessage());
     }
@@ -118,7 +120,8 @@ public class ClassRoomController {
 
       classRoomRepository.save(classRoom);
 
-      return ResponseEntity.status(HttpStatus.OK).body(classRoom);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new ClassRoomResponse(200, "Cập nhật thành công", classRoom, null, null));
     } catch (Exception e) {
       throw new NotFoundException(e.getMessage());
     }
@@ -135,7 +138,7 @@ public class ClassRoomController {
 
       classRoomRepository.deleteById(classId);
 
-      return ResponseEntity.status(HttpStatus.OK).body("oki");
+      return ResponseEntity.status(HttpStatus.OK).body(new ClassRoomResponse(200, "Xoá thành công", null, null, null));
     } catch (Exception e) {
       throw new NotFoundException(e.getMessage());
     }
@@ -152,7 +155,27 @@ public class ClassRoomController {
       ClassRoom classRoom = classOptional.get();
 
       List<UserClass> userClasses = userClassRepository.findByClassRoomId(classRoom.getId());
-      return ResponseEntity.status(HttpStatus.OK).body(userClasses);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new ClassRoomResponse(200, "Thành công", classRoom, userClasses, null));
+    } catch (Exception e) {
+      throw new NotFoundException(e.getMessage());
+    }
+  }
+
+  @GetMapping("/{classId}/listLeader")
+  public ResponseEntity<?> getListLeader(@PathVariable Long classId) {
+    try {
+      Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
+
+      if (!classOptional.isPresent()) {
+        throw new InvalidException("Lớp không tồn tại");
+      }
+
+      ClassRoom classRoom = classOptional.get();
+
+      List<UserLeader> userLeaders = userLeaderRepository.findByClassRoomId(classRoom.getId());
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new ClassRoomResponse(200, "Thành công", classRoom, null, userLeaders));
     } catch (Exception e) {
       throw new NotFoundException(e.getMessage());
     }
@@ -165,16 +188,58 @@ public class ClassRoomController {
       if (!classOptional.isPresent()) {
         throw new InvalidException("Lớp không tồn tại");
       }
-      
+
       usernameList.forEach((username) -> {
         userClassRepository.deleteByUserIdAndClassRoomId(userRepository.findByUsername(username).get().getId(),
-        classOptional.get().getId());
+            classOptional.get().getId());
       });
 
-      return ResponseEntity.status(HttpStatus.OK).body("Xoá thành công");
+      return ResponseEntity.status(HttpStatus.OK).body(new ClassRoomResponse(200, "Xoá thành công", null, null, null));
     } catch (Exception e) {
       throw new NotFoundException(e.getMessage());
     }
+  }
+
+  @PostMapping("/{classId}/addStudent")
+  public ResponseEntity<?> addStudentFromClass(@PathVariable Long classId, @RequestBody List<String> userList) {
+    Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
+    if (!classOptional.isPresent()) {
+      throw new InvalidException("Lớp không tồn tại");
+    }
+    ;
+
+    ClassRoom classRoom = classOptional.get();
+
+    userList.forEach((username) -> {
+      UserClass userClass = new UserClass(userRepository.findByUsername(username).get(), classRoom);
+      classRoom.getUserClasses().add(userClass);
+    });
+
+    classRoomRepository.save(classRoom);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ClassRoomResponse(200, "Thêm thành công", classRoom, null, null));
+  }
+
+  @PostMapping("/{classId}/addLeader")
+  public ResponseEntity<?> addLeaderFromClass(@PathVariable Long classId, @RequestBody List<String> leaderList) {
+    Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
+    if (!classOptional.isPresent()) {
+      throw new InvalidException("Lớp không tồn tại");
+    }
+    ;
+
+    ClassRoom classRoom = classOptional.get();
+
+    leaderList.forEach((username) -> {
+      UserLeader userLeader = new UserLeader(userRepository.findByUsername(username).get(), classRoom);
+      classRoom.getUserLeaders().add(userLeader);
+    });
+
+    classRoomRepository.save(classRoom);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ClassRoomResponse(200, "Thêm thành công", classRoom, null, null));
   }
 
 }
