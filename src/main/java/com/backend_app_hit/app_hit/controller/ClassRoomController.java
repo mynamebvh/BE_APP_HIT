@@ -87,7 +87,7 @@ public class ClassRoomController {
       classRoomRepository.save(classRoom);
 
       return ResponseEntity.status(HttpStatus.CREATED)
-          .body(new ClassRoomResponse(201, "Tạo thành công", classRoom, null, null));
+          .body(new ClassRoomResponse(201, "Tạo thành công", classRoom, userClassList, userLeaderList));
     } catch (Exception e) {
       throw new NotFoundException(e.getMessage());
     }

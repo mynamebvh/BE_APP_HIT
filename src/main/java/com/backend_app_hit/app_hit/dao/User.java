@@ -38,7 +38,6 @@ public class User implements Serializable {
   @Column(name = "user_name", nullable = false, unique = true)
   private String username;
 
- 
   @Column(name = "password", nullable = false)
   @JsonIgnore
   private String password;
@@ -57,6 +56,10 @@ public class User implements Serializable {
 
   @Column(name = "point")
   private Long point;
+
+  @Column(name = "token_reset_password")
+  @JsonIgnore
+  private String tokenResetPass;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonIgnore
@@ -97,7 +100,7 @@ public class User implements Serializable {
     this.posts = posts;
     this.comments = comments;
   }
-  
+
   public Long getId() {
     return id;
   }
@@ -218,5 +221,12 @@ public class User implements Serializable {
     this.updateAt = updateAt;
   }
 
-  
+  public String getTokenResetPass() {
+    return tokenResetPass;
+  }
+
+  public void setTokenResetPass(String tokenResetPass) {
+    this.tokenResetPass = tokenResetPass;
+  }
+
 }

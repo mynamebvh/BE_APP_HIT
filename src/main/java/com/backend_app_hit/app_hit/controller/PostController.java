@@ -39,11 +39,11 @@ public class PostController {
     @PostMapping("/create")
     public ResponseEntity<?> createPost(@RequestBody String content) {
         try {
-            String userName = GetUserNameByContext.getUserName();
+            String username = GetUserNameByContext.getUserName();
 
             Post post = new Post();
 
-            Optional<User> uOptional = userRepository.findByUsername(userName);
+            Optional<User> uOptional = userRepository.findByUsername(username);
             if (!uOptional.isPresent()) {
                 throw new UsernameNotFoundException("Username không tồn tại");
             }
@@ -56,7 +56,7 @@ public class PostController {
 
             List<Post> posts = new ArrayList<Post>();
             posts.add(post);
-            return ResponseEntity.ok(new PostResponse(userName, posts));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new PostResponse(201, "Thêm thành công", username, posts));
         } catch (Exception e) {
             throw new InvalidException(e.getMessage());
         }
@@ -67,9 +67,9 @@ public class PostController {
     public ResponseEntity<?> postMe() {
 
         try {
-            String userName = GetUserNameByContext.getUserName();
+            String username = GetUserNameByContext.getUserName();
 
-            Optional<User> uOptional = userRepository.findByUsername(userName);
+            Optional<User> uOptional = userRepository.findByUsername(username);
             if (!uOptional.isPresent()) {
                 throw new UsernameNotFoundException("Username không tồn tại");
             }
@@ -78,7 +78,7 @@ public class PostController {
 
             List<Post> posList = postRepository.findByUserId(user.getId());
 
-            return ResponseEntity.ok(new PostResponse(user.getUsername(), posList));
+            return ResponseEntity.ok(new PostResponse(200,"Thành công",user.getUsername(), posList));
         } catch (Exception e) {
             throw new InvalidException(e.getMessage());
         }
