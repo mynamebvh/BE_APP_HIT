@@ -1,5 +1,6 @@
 package com.backend_app_hit.app_hit.controller;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,9 +24,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.Refill;
+
 @RestController
 @RequestMapping("/api/v1")
 public class ForgetPasswordController {
+
+  private final Bucket bucket;
 
   @Autowired
   private UserRepository userRepository;
@@ -36,51 +44,60 @@ public class ForgetPasswordController {
   @Autowired
   public JavaMailSender emailSender;
 
+  public ForgetPasswordController() {
+    Bandwidth limit = Bandwidth.classic(2, Refill.greedy(2, Duration.ofMinutes(1)));
+    this.bucket = Bucket4j.builder().addLimit(limit).build();
+  }
+
   @GetMapping("/forgetPassword/{email}")
   public ResponseEntity<?> generate(@PathVariable String email) {
     final String regexEmail = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+    if (bucket.tryConsume(1)) {
+      if (Pattern.matches(regexEmail, email)) {
+        Optional<User> uOptional = userRepository.findByEmail(email);
 
-    if (Pattern.matches(regexEmail, email)) {
-      Optional<User> uOptional = userRepository.findByEmail(email);
+        if (uOptional.isPresent()) {
+          SimpleMailMessage message = new SimpleMailMessage();
 
-      if (uOptional.isPresent()) {
-        SimpleMailMessage message = new SimpleMailMessage();
+          String tokenResetPass = (String) (UUID.randomUUID().toString()).subSequence(0, 8);
+          uOptional.get().setTokenResetPass(tokenResetPass);
+          userRepository.save(uOptional.get());
 
-        String tokenResetPass = UUID.randomUUID().toString();
-        uOptional.get().setTokenResetPass(tokenResetPass);
-        userRepository.save(uOptional.get());
+          // sennd mail
+          message.setTo(uOptional.get().getEmail());
+          message.setSubject("Quên mật khẩu App HIT");
+          message.setText("Đây mã bí mật đổi mật khẩu của bạn " + tokenResetPass);
 
-        // sennd mail
-        message.setTo(uOptional.get().getEmail());
-        message.setSubject("Quên mật khẩu App HIT");
-        message.setText("Đây là link đổi mật khẩu của bạn " + "localhost:8080/api/v1/resetPassword?token=" + tokenResetPass);
+          this.emailSender.send(message);
 
-
-        this.emailSender.send(message);
-
-        return ResponseEntity.status(HttpStatus.OK)
-            .body(new Response(200, "Đường link đổi mật khẩu đã được gửi vào email của bạn"));
+          return ResponseEntity.status(HttpStatus.OK)
+              .body(new Response(200, "Đường link đổi mật khẩu đã được gửi vào email của bạn"));
+        } else {
+          throw new InvalidException("Email không tồn tại");
+        }
       } else {
-        throw new InvalidException("Email không tồn tại");
+        throw new InvalidException("Không đúng định dạng email");
       }
-    } else {
-      throw new InvalidException("Không đúng định dạng email");
     }
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("TOO_MANY_REQUESTS");
 
   }
 
   @GetMapping("/resetPassword")
   public ResponseEntity<?> forgetPassword(@RequestParam String token, @RequestBody HashMap<String, String> password) {
+    if (bucket.tryConsume(1)) {
+      Optional<User> uOptional = userRepository.findByTokenResetPass(token);
 
-    Optional<User> uOptional = userRepository.findByTokenResetPass(token);
-
-    if (uOptional.isPresent()) {
-      uOptional.get().setPassword(passwordEncoder.encode(password.get("password")));
-      uOptional.get().setTokenResetPass("");
-      userRepository.save(uOptional.get());
-      return ResponseEntity.status(HttpStatus.OK).body(new Response(200, "Đổi mật khẩu thành công"));
-    } else {
-      throw new InvalidException("Token không hợp lệ");
+      if (uOptional.isPresent()) {
+        uOptional.get().setPassword(passwordEncoder.encode(password.get("password")));
+        uOptional.get().setTokenResetPass("");
+        userRepository.save(uOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body(new Response(200, "Đổi mật khẩu thành công"));
+      } else {
+        throw new InvalidException("Token không hợp lệ");
+      }
     }
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("TOO_MANY_REQUESTS");
+
   }
 }

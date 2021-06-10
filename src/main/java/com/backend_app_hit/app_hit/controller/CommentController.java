@@ -3,6 +3,8 @@ package com.backend_app_hit.app_hit.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import com.backend_app_hit.app_hit.dao.Comment;
 import com.backend_app_hit.app_hit.dao.Post;
 import com.backend_app_hit.app_hit.dao.User;
@@ -50,8 +52,8 @@ public class CommentController {
     }
   }
 
-  @PostMapping("/")
-  public ResponseEntity<?> postComment(@RequestBody CommentDTO commentDTO) {
+  @PostMapping("/create")
+  public ResponseEntity<?> postComment(@Valid @RequestBody CommentDTO commentDTO) {
     try {
       String userName = GetUserNameByContext.getUserName();
       Optional<Post> postOptional = postRepository.findById(commentDTO.getPostId());

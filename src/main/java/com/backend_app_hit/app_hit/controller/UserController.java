@@ -47,6 +47,7 @@ public class UserController {
   }
 
   @PostMapping("/changePassword")
+  @PreAuthorize("@userAuthorizer.authorizeAdmin(authentication, 'MEMBER')")
   public ResponseEntity<?> changePassword(@RequestBody PasswordDTO passwordDTO) {
     String username = GetUserNameByContext.getUserName();
 
