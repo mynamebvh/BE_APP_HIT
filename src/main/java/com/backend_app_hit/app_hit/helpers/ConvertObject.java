@@ -11,7 +11,7 @@ public class ConvertObject {
 
     User user = new User();
     user.setFullName(signUpDTO.getFullName().trim().replace("\\s+", " "));
-    user.setUserName(signUpDTO.getUserName());
+    user.setUsername(signUpDTO.getUsername());
     user.setRole("MEMBER");
     user.setEmail(signUpDTO.getEmail());
     user.setPhone(signUpDTO.getPhone());

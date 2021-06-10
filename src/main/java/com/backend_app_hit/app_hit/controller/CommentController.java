@@ -3,6 +3,8 @@ package com.backend_app_hit.app_hit.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import com.backend_app_hit.app_hit.dao.Comment;
 import com.backend_app_hit.app_hit.dao.Post;
 import com.backend_app_hit.app_hit.dao.User;
@@ -16,14 +18,15 @@ import com.backend_app_hit.app_hit.utils.GetUserNameByContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/comment")
@@ -49,12 +52,19 @@ public class CommentController {
     }
   }
 
-  @PostMapping("/")
-  public ResponseEntity<?> postComment(@RequestBody CommentDTO commentDTO) {
+  @PostMapping("/create")
+  public ResponseEntity<?> postComment(@Valid @RequestBody CommentDTO commentDTO) {
     try {
       String userName = GetUserNameByContext.getUserName();
       Optional<Post> postOptional = postRepository.findById(commentDTO.getPostId());
-      User user = userRepository.findByUserName(userName);
+
+      Optional<User> uOptional = userRepository.findByUsername(userName);
+      if (!uOptional.isPresent()) {
+        throw new UsernameNotFoundException("Username không tồn tại");
+      }
+
+      User user = uOptional.get();
+
       if (!postOptional.isPresent()) {
         throw new NotFoundException("Bài viết không tồn tại");
       }
@@ -83,7 +93,7 @@ public class CommentController {
 
       Comment comment = commentOptional.get();
 
-      if (comment.getUser().getUserName().equals(userName)) {
+      if (comment.getUser().getUsername().equals(userName)) {
         commentRepository.deleteById(commentId);
       } else {
         throw new NotFoundException("Bạn không có quyền");
@@ -97,7 +107,7 @@ public class CommentController {
   }
 
   @PatchMapping(value = "/{commentId}")
-  public ResponseEntity<?> updateComment(@RequestBody String content, @PathVariable Long commentId ){
+  public ResponseEntity<?> updateComment(@RequestBody String content, @PathVariable Long commentId) {
     try {
       String userName = GetUserNameByContext.getUserName();
       Optional<Comment> commentOptional = commentRepository.findById(commentId);
@@ -108,7 +118,7 @@ public class CommentController {
 
       Comment comment = commentOptional.get();
 
-      if (comment.getUser().getUserName().equals(userName)) {
+      if (comment.getUser().getUsername().equals(userName)) {
         comment.setContent(content);
         commentRepository.save(comment);
       } else {

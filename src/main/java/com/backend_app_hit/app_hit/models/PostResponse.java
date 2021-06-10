@@ -4,14 +4,15 @@ import java.util.List;
 
 import com.backend_app_hit.app_hit.dao.Post;
 
-public class PostResponse {
+public class PostResponse extends Response {
   private String username;
   private List<Post> postList;
 
   public PostResponse() {
   }
 
-  public PostResponse(String username, List<Post> postList) {
+  public PostResponse(Integer status, String msg, String username, List<Post> postList) {
+    super(status, msg);
     this.username = username;
     this.postList = postList;
   }
@@ -32,6 +33,4 @@ public class PostResponse {
     this.postList = postList;
   }
 
-  
-  
 }

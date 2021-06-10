@@ -6,7 +6,8 @@
 
 # INTRODUCTION
 
-1 sản phẩm của nhóm giúp quản lí CLB HIT - ĐHCNHN
+1 sản phẩm giúp quản lí CLB HIT - ĐHCNHN
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmynamebvh%2FBE_APP_HIT.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmynamebvh%2FBE_APP_HIT?ref=badge_large)
+

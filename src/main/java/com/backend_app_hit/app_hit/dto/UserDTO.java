@@ -27,7 +27,7 @@ public class UserDTO {
 
   public UserDTO(User user) {
     this.fullName = user.getFullName();
-    this.username = user.getUserName();
+    this.username = user.getUsername();
     this.phone = user.getPhone();
     this.birthday = user.getBirthday();
     this.email = user.getBirthday();
