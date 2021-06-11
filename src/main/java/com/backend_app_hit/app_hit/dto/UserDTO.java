@@ -1,24 +1,44 @@
 package com.backend_app_hit.app_hit.dto;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import com.backend_app_hit.app_hit.dao.User;
 
 public class UserDTO {
+  @NotEmpty(message = "Họ tên không được trống")
   private String fullName;
-  private String username;
+
   private String password;
+  @NotNull
+  @Pattern(regexp = "^[0123456789]{10}$", message = "Sai định dạng username")
+  private String username;
+
+  @NotNull
+  @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = "Sai định dạng số điện thoại")
   private String phone;
+
   private String birthday;
+
+  @Email(message = "Định dạng email sai")
   private String email;
+
   private Long point;
 
   public UserDTO() {
   }
 
-  public UserDTO(String fullName, String username, String password, String phone, String birthday, String email,
-      Long point) {
+  
+
+  public UserDTO(@NotEmpty(message = "Họ tên không được trống") String fullName, String password,
+      @NotNull @Pattern(regexp = "^[0123456789]{10}$", message = "Sai định dạng username") String username,
+      @NotNull @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = "Sai định dạng số điện thoại") String phone,
+      String birthday, @Email(message = "Định dạng email sai") String email, Long point) {
     this.fullName = fullName;
-    this.username = username;
     this.password = password;
+    this.username = username;
     this.phone = phone;
     this.birthday = birthday;
     this.email = email;
@@ -48,14 +68,6 @@ public class UserDTO {
 
   public void setUsername(String username) {
     this.username = username;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
   }
 
   public String getPhone() {
@@ -88,6 +100,14 @@ public class UserDTO {
 
   public void setPoint(Long point) {
     this.point = point;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 
 }

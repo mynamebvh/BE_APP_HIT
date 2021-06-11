@@ -50,6 +50,6 @@ public class RestExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST) 
 	public ErrorResponse handleBindException(BindException ex,WebRequest req) {
-		return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getAllErrors().toString());
+		return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
 	}
 }
