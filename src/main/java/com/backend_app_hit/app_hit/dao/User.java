@@ -57,6 +57,9 @@ public class User implements Serializable {
   @Column(name = "point")
   private Long point;
 
+  @Column(name = "img_src")
+  private String url;
+
   @Column(name = "token_reset_password")
   @JsonIgnore
   private String tokenResetPass;
@@ -229,4 +232,11 @@ public class User implements Serializable {
     this.tokenResetPass = tokenResetPass;
   }
 
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
 }
