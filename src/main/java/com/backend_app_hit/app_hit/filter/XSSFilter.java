@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.backend_app_hit.app_hit.security.XSSRequestWrapper;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class XSSFilter implements Filter {
 
   @Override

@@ -1,17 +1,22 @@
 package com.backend_app_hit.app_hit.controller;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.backend_app_hit.app_hit.dao.Post;
 import com.backend_app_hit.app_hit.dao.User;
+import com.backend_app_hit.app_hit.exception.InvalidException;
 import com.backend_app_hit.app_hit.exception.NotFoundException;
 import com.backend_app_hit.app_hit.models.PostResponse;
 import com.backend_app_hit.app_hit.repository.PostRepository;
 import com.backend_app_hit.app_hit.repository.UserRepository;
 import com.backend_app_hit.app_hit.utils.GetUserNameByContext;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +29,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -43,14 +50,28 @@ public class PostController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private Cloudinary cloudinary;
+
     public PostController() {
         Bandwidth limit = Bandwidth.classic(10, Refill.greedy(10, Duration.ofMinutes(1)));
         this.bucket = Bucket4j.builder().addLimit(limit).build();
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createPost(@RequestBody String content) {
+    public ResponseEntity<?> createPost(@RequestParam("content") String content, @RequestParam("file") MultipartFile file) throws IOException {
         if (bucket.tryConsume(1)) {
+            final String URL = "https://res.cloudinary.com/dhlmdhzbz/image/upload/v1624677040/";
+            Map params = ObjectUtils.asMap("overwrite", true, "resource_type", "image", "folder", "img_post");
+
+            Map uploadResult = null;
+
+            if (file != null && !file.isEmpty()) {
+                uploadResult = this.cloudinary.uploader().upload(file.getBytes(), params);
+            } else {
+                throw new InvalidException("File không được trống");
+            }
+
             String username = GetUserNameByContext.getUserName();
 
             Post post = new Post();
@@ -64,6 +85,7 @@ public class PostController {
 
             post.setContent(content);
             post.setUser(user);
+            post.setUrlImg(URL + uploadResult.get("public_id"));
             postRepository.save(post);
 
             List<Post> posts = new ArrayList<Post>();

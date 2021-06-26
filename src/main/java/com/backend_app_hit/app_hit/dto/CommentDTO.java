@@ -1,10 +1,14 @@
 package com.backend_app_hit.app_hit.dto;
 
+import javax.validation.constraints.NotEmpty;
+
 public class CommentDTO {
+  @NotEmpty(message = "Mã bài viết không được trống")
   private Long postId;
+
+  @NotEmpty(message = "Bình luận không được trống")
   private String comment;
 
-  
   public CommentDTO() {
   }
 

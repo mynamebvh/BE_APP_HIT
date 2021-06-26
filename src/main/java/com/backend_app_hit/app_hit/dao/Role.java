@@ -1,18 +1,13 @@
 package com.backend_app_hit.app_hit.dao;
 
 import java.io.Serializable;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Role")
@@ -28,17 +23,13 @@ public class Role implements Serializable {
   @Column(name = "name", nullable = false, unique = true)
   private String name;
 
-  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-  @JsonIgnore
-  private List<UserRole> userRoles;
-
+  
   public Role() {
   }
 
-  public Role(Long id, String name, List<UserRole> userRoles) {
+  public Role(Long id, String name) {
     this.id = id;
     this.name = name;
-    this.userRoles = userRoles;
   }
 
   public static long getSerialversionuid() {
@@ -61,12 +52,5 @@ public class Role implements Serializable {
     this.name = name;
   }
 
-  public List<UserRole> getUserRoles() {
-    return userRoles;
-  }
-
-  public void setUserRoles(List<UserRole> userRoles) {
-    this.userRoles = userRoles;
-  }
-
+  
 }

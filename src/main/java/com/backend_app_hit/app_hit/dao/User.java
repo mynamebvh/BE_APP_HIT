@@ -104,6 +104,17 @@ public class User implements Serializable {
     this.comments = comments;
   }
 
+  
+  public User(String fullName, String username, String password, String birthday, String phone, String email) {
+    this.fullName = fullName;
+    this.username = username;
+    this.password = password;
+    this.birthday = birthday;
+    this.phone = phone;
+    this.email = email;
+    this.role = "MEMBER";
+  }
+
   public Long getId() {
     return id;
   }

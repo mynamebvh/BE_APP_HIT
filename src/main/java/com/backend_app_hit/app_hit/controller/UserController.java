@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import com.backend_app_hit.app_hit.dao.User;
 import com.backend_app_hit.app_hit.dto.PasswordDTO;
 import com.backend_app_hit.app_hit.exception.InvalidException;
@@ -57,7 +59,7 @@ public class UserController {
 
   @PostMapping("/changePassword")
   @PreAuthorize("@userAuthorizer.authorizeAdmin(authentication, 'MEMBER')")
-  public ResponseEntity<?> changePassword(@RequestBody PasswordDTO passwordDTO) {
+  public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordDTO passwordDTO) {
     String username = GetUserNameByContext.getUserName();
 
     User user = userRepository.findByUsername(username).get();
@@ -73,7 +75,7 @@ public class UserController {
 
   @PostMapping("/uploadAvatar")
   public ResponseEntity<?> updateAvatar(@RequestParam("file") MultipartFile file) throws IOException {
-    final String URL = "https://res.cloudinary.com/dhlmdhzbz/image/upload/";
+    final String URL = "https://res.cloudinary.com/dhlmdhzbz/image/upload/v1624677040/";
     
     String username = GetUserNameByContext.getUserName();
 

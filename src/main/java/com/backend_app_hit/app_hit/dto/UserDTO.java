@@ -12,6 +12,7 @@ public class UserDTO {
   private String fullName;
 
   private String password;
+  
   @NotNull
   @Pattern(regexp = "^[0123456789]{10}$", message = "Sai định dạng username")
   private String username;

@@ -1,5 +1,7 @@
 package com.backend_app_hit.app_hit.security;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -10,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 public class XSSRequestWrapper extends HttpServletRequestWrapper {
+  public static final String stripXSS = null;
+
   public XSSRequestWrapper(HttpServletRequest request) {
     super(request);
     // TODO Auto-generated constructor stub
@@ -35,6 +39,8 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
     return stripXSS(value);
   }
 
+ 
+
   @Override
   public Enumeration<String> getHeaders(String name) {
     List result = new ArrayList<>();
@@ -49,7 +55,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
     return Collections.enumeration(result);
   }
 
-  private String stripXSS(String value) {
+  public String stripXSS(String value) {
     if (value != null) {
       // NOTE: It's highly recommended to use the ESAPI library and uncomment the
       // following line to
@@ -103,4 +109,6 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
     }
     return value;
   }
+
+  
 }

@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import com.backend_app_hit.app_hit.dao.User;
 import com.backend_app_hit.app_hit.dto.SignUpDTO;
@@ -15,6 +17,7 @@ import com.backend_app_hit.app_hit.models.AuthenticationResponse;
 import com.backend_app_hit.app_hit.repository.UserRepository;
 import com.backend_app_hit.app_hit.security.LoginAttemptService;
 import com.backend_app_hit.app_hit.services.CustomUserDetailsService;
+import com.backend_app_hit.app_hit.services.builder.UserDaoBuilder;
 import com.backend_app_hit.app_hit.utils.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,7 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 
+@Transactional
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthenController {
@@ -67,7 +71,7 @@ public class AuthenController {
   }
 
   @PostMapping(value = "/login")
-  public ResponseEntity<?> login(@RequestBody AuthenticationRequest requestAuth) throws Exception {
+  public ResponseEntity<?> login(@Valid @RequestBody AuthenticationRequest requestAuth) throws Exception {
     if (bucket.tryConsume(1)) {
 
       final String xfHeader = request.getHeader("X-Forwarded-For");
@@ -109,15 +113,18 @@ public class AuthenController {
   }
 
   @PostMapping(value = "/signup")
-  public ResponseEntity<?> register(@RequestBody SignUpDTO signUpDTO) {
+  public ResponseEntity<?> register(@Valid @RequestBody SignUpDTO signUpDTO) {
     if (bucket.tryConsume(1)) {
       Optional<User> uOptional = userRepository.findByUsername(signUpDTO.getUsername());
 
       if (uOptional.isPresent()) {
-        throw new InvalidException("tài khoản không tồn tại");
+        throw new InvalidException("tài khoản đã tồn tại");
       }
 
-      User newUser = ConvertObject.fromSignUpDTOToUserDAO(signUpDTO);
+      User newUser = new UserDaoBuilder().setFullName(signUpDTO.getFullName())
+      .setUsername(signUpDTO.getUsername()).setPassword(signUpDTO.getPassword())
+      .setPhone(signUpDTO.getPhone()).setEmail(signUpDTO.getEmail()).setBirthday(signUpDTO.getBirthday())
+      .build();
 
       if (newUser == null) {
         throw new InvalidException("Tài khoản không hợp lệ");

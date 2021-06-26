@@ -46,6 +46,9 @@ public class Post implements Serializable {
   @Nationalized
   private String content;
 
+  @Column(name = "url_img")
+  private String urlImg;
+  
   @CreationTimestamp
   private Timestamp createAt;
 
@@ -117,5 +120,14 @@ public class Post implements Serializable {
     this.updateAt = updateAt;
   }
 
+  public String getUrlImg() {
+    return urlImg;
+  }
+
+  public void setUrlImg(String urlImg) {
+    this.urlImg = urlImg;
+  }
+
+  
   
 }
