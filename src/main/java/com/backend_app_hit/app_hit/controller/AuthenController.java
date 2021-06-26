@@ -11,7 +11,6 @@ import javax.validation.Valid;
 import com.backend_app_hit.app_hit.dao.User;
 import com.backend_app_hit.app_hit.dto.SignUpDTO;
 import com.backend_app_hit.app_hit.exception.InvalidException;
-import com.backend_app_hit.app_hit.helpers.ConvertObject;
 import com.backend_app_hit.app_hit.models.AuthenticationRequest;
 import com.backend_app_hit.app_hit.models.AuthenticationResponse;
 import com.backend_app_hit.app_hit.repository.UserRepository;
