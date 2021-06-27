@@ -21,7 +21,7 @@
 
 <h3>3. Ngăn chặn XSS – Cross-Site Scripting</h3>
 <ul> 
-  <li>Xss filter chặn xss từ Header, Parameters </li>
+  <li>Xss filter chặn Xss từ Header, Parameters </li>
 </ul>
 
 <h3>4. Ngăn chặn SQL injection</h3>
