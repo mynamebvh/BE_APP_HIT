@@ -35,9 +35,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable().authorizeRequests().antMatchers("/api/v1/auth/**").permitAll()
-        .antMatchers("/api/v1/user/**", "/api/v1/post/**", "/api/v1/comment/**", "/api/v1/class/**").authenticated()
+        .antMatchers("/api/v1/user/**", "/api/v1/post/**", "/api/v1/comment/**", "/api/v1/class/**" , "/api/v1/post/**").authenticated()
         .antMatchers("api/v1/admin/**").hasRole("ADMIN").and().sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    http.headers().xssProtection().and().contentSecurityPolicy("script-src 'self'");
 
     http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
   }
@@ -52,5 +53,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
-
 }

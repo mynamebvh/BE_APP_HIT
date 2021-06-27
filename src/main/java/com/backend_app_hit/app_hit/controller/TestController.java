@@ -2,6 +2,8 @@ package com.backend_app_hit.app_hit.controller;
 
 import java.time.Duration;
 
+
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +16,7 @@ import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/api/v1")
 public class TestController {
 
   private final Bucket bucket;
@@ -31,5 +33,6 @@ public class TestController {
     }
     return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("TOO_MANY_REQUESTS");
   }
+
 
 }

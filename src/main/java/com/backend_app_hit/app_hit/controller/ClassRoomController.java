@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import com.backend_app_hit.app_hit.dao.ClassRoom;
 import com.backend_app_hit.app_hit.dao.UserClass;
@@ -76,7 +77,7 @@ public class ClassRoomController {
 
   @PreAuthorize("@userAuthorizer.authorizeAdmin(authentication, 'ADMIN')")
   @PostMapping("/create")
-  public ResponseEntity<?> createClass(@RequestBody ClassRoomDTO classRoomDTO) {
+  public ResponseEntity<?> createClass(@Valid @RequestBody ClassRoomDTO classRoomDTO) {
     if (bucket.tryConsume(1)) {
       ClassRoom classRoom = new ClassRoom(classRoomDTO.getName());
       classRoomRepository.save(classRoom);
@@ -105,7 +106,7 @@ public class ClassRoomController {
 
   @PreAuthorize("@userAuthorizer.authorizeAdmin(authentication, 'ADMIN')")
   @PatchMapping("/{classId}")
-  public ResponseEntity<?> updateClass(@PathVariable Long classId, @RequestBody ClassRoomDTO classRoomDTO) {
+  public ResponseEntity<?> updateClass(@PathVariable Long classId,@Valid @RequestBody ClassRoomDTO classRoomDTO) {
     if (bucket.tryConsume(1)) {
       List<UserClass> userClassList = new ArrayList<UserClass>();
       List<UserLeader> userLeaderList = new ArrayList<UserLeader>();
@@ -140,7 +141,7 @@ public class ClassRoomController {
 
   @PreAuthorize("@userAuthorizer.authorizeAdmin(authentication, 'ADMIN')")
   @DeleteMapping("/{classId}")
-  public ResponseEntity<?> deleteClass(@PathVariable Long classId, @RequestBody ClassRoomDTO classRoomDTO) {
+  public ResponseEntity<?> deleteClass(@PathVariable Long classId, @Valid @RequestBody ClassRoomDTO classRoomDTO) {
     if (bucket.tryConsume(1)) {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
 
@@ -194,7 +195,7 @@ public class ClassRoomController {
   }
 
   @DeleteMapping("/{classId}/deleteStudent")
-  public ResponseEntity<?> deleteStudentFromClass(@PathVariable Long classId, @RequestBody List<String> usernameList) {
+  public ResponseEntity<?> deleteStudentFromClass(@PathVariable Long classId,@Valid @RequestBody List<String> usernameList) {
     if (bucket.tryConsume(1)) {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
       if (!classOptional.isPresent()) {
@@ -213,7 +214,7 @@ public class ClassRoomController {
   }
 
   @PostMapping("/{classId}/addStudent")
-  public ResponseEntity<?> addStudentFromClass(@PathVariable Long classId, @RequestBody List<String> userList) {
+  public ResponseEntity<?> addStudentFromClass(@PathVariable Long classId,@Valid @RequestBody List<String> userList) {
     if (bucket.tryConsume(1)) {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
       if (!classOptional.isPresent()) {
@@ -238,7 +239,7 @@ public class ClassRoomController {
   }
 
   @PostMapping("/{classId}/addLeader")
-  public ResponseEntity<?> addLeaderFromClass(@PathVariable Long classId, @RequestBody List<String> leaderList) {
+  public ResponseEntity<?> addLeaderFromClass(@PathVariable Long classId,@Valid @RequestBody List<String> leaderList) {
     if (bucket.tryConsume(1)) {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
       if (!classOptional.isPresent()) {

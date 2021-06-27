@@ -2,9 +2,13 @@ package com.backend_app_hit.app_hit.dto;
 
 import java.util.List;
 
+import javax.validation.constraints.NotEmpty;
+
 public class ClassRoomDTO {
   private List<String> leaderList;
   private List<String> memberList;
+
+  @NotEmpty(message = "Tên lớp không được trống")
   private String name;
 
   public ClassRoomDTO() {

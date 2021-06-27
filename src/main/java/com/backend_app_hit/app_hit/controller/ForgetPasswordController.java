@@ -19,6 +19,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,7 +50,7 @@ public class ForgetPasswordController {
     this.bucket = Bucket4j.builder().addLimit(limit).build();
   }
 
-  @GetMapping("/forgetPassword/{email}")
+  @PostMapping("/forgetPassword/{email}")
   public ResponseEntity<?> generate(@PathVariable String email) {
     final String regexEmail = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
     if (bucket.tryConsume(1)) {
@@ -83,7 +84,25 @@ public class ForgetPasswordController {
 
   }
 
-  @GetMapping("/resetPassword")
+  @PostMapping("/check-token")
+  public ResponseEntity<?> checkToken(@RequestParam(name = "token") String token){
+    if (bucket.tryConsume(1)) {
+      HashMap<String, Boolean> response = new HashMap<String, Boolean>();
+      Optional<User> uOptional = userRepository.findByTokenResetPass(token);
+      if (uOptional.isPresent()) {
+        
+        response.put("exist", true);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+      }
+      else{
+        response.put("exist", false);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+      }
+    }
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("TOO_MANY_REQUESTS");
+  }
+
+  @PostMapping("/resetPassword")
   public ResponseEntity<?> forgetPassword(@RequestParam String token, @RequestBody HashMap<String, String> password) {
     if (bucket.tryConsume(1)) {
       Optional<User> uOptional = userRepository.findByTokenResetPass(token);

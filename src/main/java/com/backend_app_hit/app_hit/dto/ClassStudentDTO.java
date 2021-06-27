@@ -2,7 +2,10 @@ package com.backend_app_hit.app_hit.dto;
 
 import java.util.List;
 
+import javax.validation.constraints.NotEmpty;
+
 public class ClassStudentDTO {
+  @NotEmpty(message = "Mã lớp không được trống")
   private Long classId;
   private List<String> username;
 

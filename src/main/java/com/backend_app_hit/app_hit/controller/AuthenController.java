@@ -4,15 +4,19 @@ import java.time.Duration;
 import java.util.Optional;
 
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import com.backend_app_hit.app_hit.dao.User;
 import com.backend_app_hit.app_hit.dto.SignUpDTO;
 import com.backend_app_hit.app_hit.exception.InvalidException;
-import com.backend_app_hit.app_hit.helpers.ConvertObject;
 import com.backend_app_hit.app_hit.models.AuthenticationRequest;
 import com.backend_app_hit.app_hit.models.AuthenticationResponse;
 import com.backend_app_hit.app_hit.repository.UserRepository;
+import com.backend_app_hit.app_hit.security.LoginAttemptService;
 import com.backend_app_hit.app_hit.services.CustomUserDetailsService;
+import com.backend_app_hit.app_hit.services.builder.UserDaoBuilder;
 import com.backend_app_hit.app_hit.utils.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,7 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 
+@Transactional
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthenController {
@@ -53,29 +58,52 @@ public class AuthenController {
   @Autowired
   private CustomUserDetailsService userService;
 
+  @Autowired
+  private HttpServletRequest request;
+
+  @Autowired
+  private LoginAttemptService loginAttemptService;
+
   public AuthenController() {
-    Bandwidth limit = Bandwidth.classic(5, Refill.greedy(5, Duration.ofMinutes(1)));
+    Bandwidth limit = Bandwidth.classic(20, Refill.greedy(20, Duration.ofMinutes(1)));
     this.bucket = Bucket4j.builder().addLimit(limit).build();
   }
 
   @PostMapping(value = "/login")
-  public ResponseEntity<?> login(@RequestBody AuthenticationRequest request) throws Exception {
+  public ResponseEntity<?> login(@Valid @RequestBody AuthenticationRequest requestAuth) throws Exception {
     if (bucket.tryConsume(1)) {
+
+      final String xfHeader = request.getHeader("X-Forwarded-For");
+      String ip = null;
       try {
-        authenticationManager
-            .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        // Get ip address
+
+        if (xfHeader == null) {
+          ip = request.getRemoteAddr();
+        } else {
+          ip = xfHeader.split(",")[0];
+        }
+
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(requestAuth.getUsername(), requestAuth.getPassword()));
+
       } catch (Exception e) {
-        throw new LoginException("Incorrect username or password");
+        loginAttemptService.loginFailed(ip);
+        if (loginAttemptService.isBlocked(ip)) {
+          throw new LoginException("Tài khoản đã bị khoá 24h do đăng nhập sai quá nhiều");
+        }
+
+        throw new LoginException("Sai tài khoản hoặc mật khẩu");
       }
 
-      Optional<User> uOptional = userRepository.findByUsername(request.getUsername());
+      Optional<User> uOptional = userRepository.findByUsername(requestAuth.getUsername());
       if (!uOptional.isPresent()) {
-        throw new UsernameNotFoundException("Username không tồn tại");
+        throw new UsernameNotFoundException("tài khoản không tồn tại");
       }
 
       User user = uOptional.get();
-      String token = jwtUtil.generateToken(request.getUsername());
-      
+      String token = jwtUtil.generateToken(requestAuth.getUsername());
+
       return ResponseEntity
           .ok(new AuthenticationResponse(200, token, user.getId(), user.getUsername(), user.getRole()));
     }
@@ -84,18 +112,21 @@ public class AuthenController {
   }
 
   @PostMapping(value = "/signup")
-  public ResponseEntity<?> register(@RequestBody SignUpDTO signUpDTO) {
+  public ResponseEntity<?> register(@Valid @RequestBody SignUpDTO signUpDTO) {
     if (bucket.tryConsume(1)) {
       Optional<User> uOptional = userRepository.findByUsername(signUpDTO.getUsername());
 
       if (uOptional.isPresent()) {
-        throw new InvalidException("user not exits");
+        throw new InvalidException("tài khoản đã tồn tại");
       }
 
-      User newUser = ConvertObject.fromSignUpDTOToUserDAO(signUpDTO);
+      User newUser = new UserDaoBuilder().setFullName(signUpDTO.getFullName())
+      .setUsername(signUpDTO.getUsername()).setPassword(signUpDTO.getPassword())
+      .setPhone(signUpDTO.getPhone()).setEmail(signUpDTO.getEmail()).setBirthday(signUpDTO.getBirthday())
+      .build();
 
       if (newUser == null) {
-        throw new InvalidException("Invalid user");
+        throw new InvalidException("Tài khoản không hợp lệ");
       }
       newUser.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
       userRepository.save(newUser);
