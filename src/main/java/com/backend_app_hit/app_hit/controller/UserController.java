@@ -57,7 +57,7 @@ public class UserController {
     return ResponseEntity.ok(user);
   }
 
-  @PostMapping("/changePassword")
+  @PostMapping("/change-password")
   @PreAuthorize("@userAuthorizer.authorizeAdmin(authentication, 'MEMBER')")
   public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordDTO passwordDTO) {
     String username = GetUserNameByContext.getUserName();
@@ -73,7 +73,7 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.OK).body(new Response(200, "Đổi mật khẩu thành công"));
   }
 
-  @PostMapping("/uploadAvatar")
+  @PostMapping("/upload-avatar")
   public ResponseEntity<?> updateAvatar(@RequestParam("file") MultipartFile file) throws IOException {
     final String URL = "https://res.cloudinary.com/dhlmdhzbz/image/upload/v1624677040/";
     

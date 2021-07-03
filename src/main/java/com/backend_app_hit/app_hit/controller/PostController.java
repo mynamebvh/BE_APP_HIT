@@ -58,7 +58,7 @@ public class PostController {
         this.bucket = Bucket4j.builder().addLimit(limit).build();
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> createPost(@RequestParam("content") String content, @RequestParam("file") MultipartFile file) throws IOException {
         if (bucket.tryConsume(1)) {
             final String URL = "https://res.cloudinary.com/dhlmdhzbz/image/upload/v1624677040/";

@@ -41,7 +41,7 @@ public class AdminController {
     return ResponseEntity.status(HttpStatus.OK).body(pages);
   }
 
-  @GetMapping("/findUser")
+  @GetMapping("/find-user")
   public ResponseEntity<?> findUserByName(@RequestBody HashMap<String, String> option){
      Optional<User> uOptional = null;
     switch (option.get("option")) {
@@ -102,7 +102,7 @@ public class AdminController {
     return ResponseEntity.status(HttpStatus.OK).body(new Response(200, "Xoá thành công"));
   }
 
-  @GetMapping("/grantPermission")
+  @GetMapping("/grant-permission")
   public ResponseEntity<?> grantPermission(@RequestParam String username){
   
     Optional<User> uOptional = userRepository.findByUsername(username);

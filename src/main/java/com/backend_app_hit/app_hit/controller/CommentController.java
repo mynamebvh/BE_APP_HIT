@@ -52,7 +52,7 @@ public class CommentController {
     }
   }
 
-  @PostMapping("/create")
+  @PostMapping()
   public ResponseEntity<?> postComment(@Valid @RequestBody CommentDTO commentDTO) {
     try {
       String userName = GetUserNameByContext.getUserName();

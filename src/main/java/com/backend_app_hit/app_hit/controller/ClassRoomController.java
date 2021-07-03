@@ -76,7 +76,7 @@ public class ClassRoomController {
   }
 
   @PreAuthorize("@userAuthorizer.authorizeAdmin(authentication, 'ADMIN')")
-  @PostMapping("/create")
+  @PostMapping()
   public ResponseEntity<?> createClass(@Valid @RequestBody ClassRoomDTO classRoomDTO) {
     if (bucket.tryConsume(1)) {
       ClassRoom classRoom = new ClassRoom(classRoomDTO.getName());
@@ -157,7 +157,7 @@ public class ClassRoomController {
 
   }
 
-  @GetMapping("/{classId}/listStudent")
+  @GetMapping("/{classId}/list-student")
   public ResponseEntity<?> getListMember(@PathVariable Long classId) {
     if (bucket.tryConsume(1)) {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
@@ -175,7 +175,7 @@ public class ClassRoomController {
 
   }
 
-  @GetMapping("/{classId}/listLeader")
+  @GetMapping("/{classId}/list-leader")
   public ResponseEntity<?> getListLeader(@PathVariable Long classId) {
     if (bucket.tryConsume(1)) {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
@@ -194,7 +194,7 @@ public class ClassRoomController {
 
   }
 
-  @DeleteMapping("/{classId}/deleteStudent")
+  @DeleteMapping("/{classId}/delete-student")
   public ResponseEntity<?> deleteStudentFromClass(@PathVariable Long classId,@Valid @RequestBody List<String> usernameList) {
     if (bucket.tryConsume(1)) {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
@@ -213,7 +213,7 @@ public class ClassRoomController {
 
   }
 
-  @PostMapping("/{classId}/addStudent")
+  @PostMapping("/{classId}/add-student")
   public ResponseEntity<?> addStudentFromClass(@PathVariable Long classId,@Valid @RequestBody List<String> userList) {
     if (bucket.tryConsume(1)) {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);
@@ -238,7 +238,7 @@ public class ClassRoomController {
 
   }
 
-  @PostMapping("/{classId}/addLeader")
+  @PostMapping("/{classId}/add-leader")
   public ResponseEntity<?> addLeaderFromClass(@PathVariable Long classId,@Valid @RequestBody List<String> leaderList) {
     if (bucket.tryConsume(1)) {
       Optional<ClassRoom> classOptional = classRoomRepository.findById(classId);

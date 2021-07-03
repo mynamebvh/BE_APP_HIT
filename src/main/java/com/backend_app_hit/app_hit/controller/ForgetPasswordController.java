@@ -50,7 +50,7 @@ public class ForgetPasswordController {
     this.bucket = Bucket4j.builder().addLimit(limit).build();
   }
 
-  @PostMapping("/forgetPassword/{email}")
+  @PostMapping("/forget-password/{email}")
   public ResponseEntity<?> generate(@PathVariable String email) {
     final String regexEmail = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
     if (bucket.tryConsume(1)) {
@@ -102,7 +102,7 @@ public class ForgetPasswordController {
     return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("TOO_MANY_REQUESTS");
   }
 
-  @PostMapping("/resetPassword")
+  @PostMapping("/reset-password")
   public ResponseEntity<?> forgetPassword(@RequestParam String token, @RequestBody HashMap<String, String> password) {
     if (bucket.tryConsume(1)) {
       Optional<User> uOptional = userRepository.findByTokenResetPass(token);
